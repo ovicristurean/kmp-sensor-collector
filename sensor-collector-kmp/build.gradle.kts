@@ -1,11 +1,57 @@
+import com.vanniktech.maven.publish.SonatypeHost
+
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidLibrary)
-    id("maven-publish")
+    id("com.vanniktech.maven.publish") version "0.28.0"
 }
 
 group = "com.ovidiucristurean"
 version = "0.1.2"
+
+mavenPublishing {
+    // Define coordinates for the published artifact
+    coordinates(
+        groupId = "io.github.ovicristurean",
+        artifactId = "sensor-collector-kmp",
+        version = "0.1.2"
+    )
+
+    // Configure POM metadata for the published artifact
+    pom {
+        name.set("KMP Library for collecting sensor data")
+        description.set("This library can be used by Android and iOS targets for the shared functionality of collecting sensor data")
+        inceptionYear.set("2025")
+        url.set("https://github.com/ovicristurean/kmp-sensor-collector")
+
+        licenses {
+            license {
+                name.set("MIT")
+                url.set("https://opensource.org/licenses/MIT")
+            }
+        }
+
+        // Specify developer information
+        developers {
+            developer {
+                id.set("ovicristurean")
+                name.set("Ovidiu Cristurean")
+                email.set("cristurean.marius.ovidiu@gmail.com")
+            }
+        }
+
+        // Specify SCM information
+        scm {
+            url.set("https://github.com/ovicristurean/kmp-sensor-collector")
+        }
+    }
+
+    // Configure publishing to Maven Central
+    publishToMavenCentral(SonatypeHost.CENTRAL_PORTAL)
+
+    // Enable GPG signing for all publications
+    signAllPublications()
+}
 
 kotlin {
     androidTarget {
