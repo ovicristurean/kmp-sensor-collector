@@ -1,4 +1,4 @@
-This is a Kotlin Multiplatform library which collects data from the phone's rotation vector and accelerometer, with implementations for Android and iOS.
+This is a Kotlin Multiplatform library which collects data from the phone's rotation vector and accelerometer, with implementations for Android and iOS. A sample app for this library: https://github.com/ovicristurean/SensorCollectorPlayground
 
 Steps to integrate the library:
 1. Make sure that the `mavenCentral` is added in `settings.gradle`:
@@ -53,5 +53,3 @@ viewModelScope.launch {
 }
 phoneSensorManager.registerSensor(SensorType.ROTATION_VECTOR)
 ```
-
-A sample app for this library: https://github.com/ovicristurean/SensorCollectorPlayground
