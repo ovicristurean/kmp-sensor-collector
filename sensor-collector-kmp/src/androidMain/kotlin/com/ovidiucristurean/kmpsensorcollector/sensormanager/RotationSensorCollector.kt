@@ -4,6 +4,7 @@ import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
+import com.ovidiucristurean.kmpsensorcollector.collector.SensorCollector
 import com.ovidiucristurean.kmpsensorcollector.model.RotationData
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -11,16 +12,18 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
 
-class RotationSensorManager(
+internal class RotationSensorCollector(
     private val sensorManager: SensorManager,
     private val rotationFlow: MutableSharedFlow<RotationData>
-) : SensorEventListener {
+) : SensorEventListener, SensorCollector {
     private var rotationVectorSensor: Sensor? =
         sensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR)
 
     private var scope: CoroutineScope? = null
 
-    fun register() {
+    override val isAvailable = rotationVectorSensor != null
+
+    override fun register() {
         scope = CoroutineScope(Dispatchers.Main)
         sensorManager.registerListener(
             this,
@@ -29,7 +32,7 @@ class RotationSensorManager(
         )
     }
 
-    fun unregister() {
+    override fun unregister() {
         sensorManager.unregisterListener(this, rotationVectorSensor)
         scope?.cancel()
         scope = null
@@ -55,8 +58,6 @@ class RotationSensorManager(
                 )
             )
         }
-
-        println("OVI: Azimuth: $azimuth, Pitch: $pitch, Roll: $roll")
     }
 
     override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) = Unit

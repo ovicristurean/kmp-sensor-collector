@@ -4,6 +4,7 @@ import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
+import com.ovidiucristurean.kmpsensorcollector.collector.SensorCollector
 import com.ovidiucristurean.kmpsensorcollector.model.AccelerometerData
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -11,17 +12,19 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
 
-class AccelerometerSensorManager(
+internal class AccelerometerSensorCollector(
     private val sensorManager: SensorManager,
     private val accelerometerFlow: MutableSharedFlow<AccelerometerData>
-) : SensorEventListener {
+) : SensorEventListener, SensorCollector {
 
     private var scope: CoroutineScope? = null
 
     private var accelerometerSensor: Sensor? =
         sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
 
-    fun register() {
+    override val isAvailable = accelerometerSensor != null
+
+    override fun register() {
         scope = CoroutineScope(Dispatchers.Main)
         sensorManager.registerListener(
             this,
@@ -30,7 +33,7 @@ class AccelerometerSensorManager(
         )
     }
 
-    fun unregister() {
+    override fun unregister() {
         sensorManager.unregisterListener(this, accelerometerSensor)
         scope?.cancel()
         scope = null

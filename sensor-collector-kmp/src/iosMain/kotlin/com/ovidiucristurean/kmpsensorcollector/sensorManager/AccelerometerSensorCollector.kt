@@ -1,5 +1,6 @@
 package com.ovidiucristurean.kmpsensorcollector.sensorManager
 
+import com.ovidiucristurean.kmpsensorcollector.collector.SensorCollector
 import com.ovidiucristurean.kmpsensorcollector.model.AccelerometerData
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.useContents
@@ -11,15 +12,17 @@ import kotlinx.coroutines.launch
 import platform.CoreMotion.CMMotionManager
 import platform.Foundation.NSOperationQueue
 
-class AccelerometerSensorManager(
+internal class AccelerometerSensorCollector(
     private val motionManager: CMMotionManager,
     private val accelerometerFlow: MutableSharedFlow<AccelerometerData>
-) {
+) : SensorCollector {
 
     private var scope: CoroutineScope? = null
 
+    override val isAvailable = motionManager.isAccelerometerAvailable()
+
     @OptIn(ExperimentalForeignApi::class)
-    fun register() {
+    override fun register() {
         scope = CoroutineScope(Dispatchers.Main)
         if (motionManager.isAccelerometerAvailable()) {
             motionManager.accelerometerUpdateInterval = 0.1 // Update every 100ms
@@ -38,7 +41,7 @@ class AccelerometerSensorManager(
         }
     }
 
-    fun unregister() {
+    override fun unregister() {
         motionManager.stopAccelerometerUpdates()
         scope?.cancel()
         scope = null

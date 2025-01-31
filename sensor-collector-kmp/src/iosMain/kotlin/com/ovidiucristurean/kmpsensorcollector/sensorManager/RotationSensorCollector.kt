@@ -1,5 +1,6 @@
 package com.ovidiucristurean.kmpsensorcollector.sensorManager
 
+import com.ovidiucristurean.kmpsensorcollector.collector.SensorCollector
 import com.ovidiucristurean.kmpsensorcollector.model.RotationData
 import com.ovidiucristurean.kmpsensorcollector.sensorManager.util.convertLongToDegrees
 import kotlinx.coroutines.CoroutineScope
@@ -10,14 +11,16 @@ import kotlinx.coroutines.launch
 import platform.CoreMotion.CMMotionManager
 import platform.Foundation.NSOperationQueue
 
-class RotationSensorManager(
+internal class RotationSensorCollector(
     private val motionManager: CMMotionManager,
     private val rotationFlow: MutableSharedFlow<RotationData>
-) {
+) : SensorCollector {
 
     private var scope: CoroutineScope? = null
 
-    fun register() {
+    override val isAvailable = motionManager.isDeviceMotionAvailable()
+
+    override fun register() {
         scope = CoroutineScope(Dispatchers.Main)
         if (motionManager.isDeviceMotionAvailable()) {
             motionManager.deviceMotionUpdateInterval = 1.0 / 60.0 // 60 Hz
@@ -50,7 +53,7 @@ class RotationSensorManager(
         }
     }
 
-    fun unregister() {
+    override fun unregister() {
         motionManager.stopDeviceMotionUpdates()
         scope?.cancel()
         scope = null

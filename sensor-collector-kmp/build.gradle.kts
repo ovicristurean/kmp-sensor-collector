@@ -7,14 +7,14 @@ plugins {
 }
 
 group = "com.ovidiucristurean"
-version = "0.1.2"
+version = "0.1.4"
 
 mavenPublishing {
     // Define coordinates for the published artifact
     coordinates(
         groupId = "io.github.ovicristurean",
         artifactId = "sensor-collector-kmp",
-        version = "0.1.2"
+        version = "0.1.4"
     )
 
     // Configure POM metadata for the published artifact

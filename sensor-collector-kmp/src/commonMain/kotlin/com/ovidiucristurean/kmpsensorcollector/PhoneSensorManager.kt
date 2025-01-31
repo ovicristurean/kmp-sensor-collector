@@ -9,6 +9,8 @@ interface PhoneSensorManager {
     val rotationData: SharedFlow<RotationData>
     val accelerometerData: SharedFlow<AccelerometerData>
 
+    fun isSensorAvailable(sensorType: SensorType): Boolean
+
     fun registerSensor(sensorType: SensorType)
     fun unregisterSensor(sensorType: SensorType)
 }
